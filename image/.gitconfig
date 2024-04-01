@@ -1,0 +1,11 @@
+[user]
+  name = candidate
+  email = candidate@dynamicyield.com
+
+[pull]
+  ff = only
+  prune = true
+  rebase = true
+
+[safe]
+  directory = *

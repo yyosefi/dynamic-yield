@@ -1,0 +1,12 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["github>dy-interviews/renovate-config"],
+  "packageRules": [
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ubuntu"],
+      "versioning": "ubuntu",
+      "allowedVersions": "/22\\.04/"
+    }
+  ]
+}

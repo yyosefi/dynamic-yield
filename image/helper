@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail -o posix
+
+function install_base_packages {
+  apt-get update
+  apt-get install ca-certificates curl git jq #openssh-client
+}
+
+function install_docker {
+  # curl -fsSL -o- https://get.docker.com | bash - \
+  apt-get install ca-certificates gnupg lsb-release
+  mkdir -p /etc/apt/keyrings
+  curl -fsSL -o- https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list >/dev/null
+  apt-get update
+  apt-get install docker-ce-cli
+
+  compose_ver=$(curl -fsSL https://api.github.com/repos/docker/compose/releases/latest | jq -r '.tag_name')
+  curl -fsSL https://github.com/docker/compose/releases/download/"$compose_ver"/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+  ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+  chmod +x /usr/bin/docker-compose
+}
+
+function install_precommit {
+  apt-get install python3-full python3-pip
+  pip install --no-cache-dir --upgrade pip setuptools wheel pre-commit -q
+}
+
+function install_nvm {
+  PROFILE=/dev/null bash -c 'curl -fsSL -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash -'
+}
+
+function install_pyenv {
+  curl -fsSL -o- https://pyenv.run | bash -
+}
+
+function install_rbenv {
+  apt-get update
+  apt-get install rbenv
+}
+
+function usage {
+  cat <<EOM
+$(basename "$0") <sub-command>
+
+sub-command:
+------------
+$(
+    sed -En 's/(^function\s)(.*)(\s.*)/\2/p' "$0" |
+      grep -v "main\|${FUNCNAME[0]}" |
+      sort
+  )
+EOM
+}
+
+if [ $# -eq 0 ]; then
+  usage
+else
+  "$@"
+fi

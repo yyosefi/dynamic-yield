@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=https://json.schemastore.org/yamllint.json
+
+extends: default
+
+rules:
+  line-length:
+    max: 300
+  document-start: disable
+  truthy:
+    check-keys: false
+  comments:
+    min-spaces-from-content: 1

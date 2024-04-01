@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json
+
+version: '3.9'
+services:
+  devcontainer: &devcontainer
+    build:
+      context: image
+    image: dy-interviews/devcontainer
+    container_name: devcontainer
+    working_dir: /src
+    volumes:
+      - ${LOCAL_WORKSPACE_FOLDER:-.}:/src
+      # - $SSH_AUTH_SOCK:/ssh-agent
+      # - ~/.ssh/id_rsa:/root/.ssh/id_rsa:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  test:
+    <<: *devcontainer
+    container_name: test
+    # entrypoint: /bin/bash -lc
+    command: |
+      -Eeuc "
+      docker --version && \
+      git --version
+      "
+
+#  && \
+#       pyenv --version && \
+#       rbenv --version && \
+#       echo -n 'nvm ' && \
+#       nvm --version

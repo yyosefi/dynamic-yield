@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
+name: Quality Checks
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+on:
+  merge_group:
+  pull_request:
+  push:
+    branches:
+      - master
+    paths:
+      - .pre-commit-config.yaml
+jobs:
+  quality-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Quality Checks
+        uses: DynamicYield/action-quality-checks@master
+        with:
+          release-token: ${{ secrets.GH_PAT_SEM_REL }}
+          org-token: ${{ secrets.GH_PAT_RO }}
+          auto-approve-and-merge: true
